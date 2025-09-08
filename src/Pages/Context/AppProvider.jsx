@@ -1,21 +1,21 @@
+import api from '../../Utils/ApiClient'
 import { AppContext } from './AppContext'
 import { useEffect, useState } from 'react'
 
-export default function AppProvider({ children}) {
+export default function AppProvider({ children }) {
     const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'))
     const [user, setUser] = useState(null)
 
     useEffect(() => {
         async function getUser() {
-            const response = await fetch('/api/auth/users', {
+            const result = await api.get('/auth/users', {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
             })
-            const data = await response.json()
-
-            if (response.ok) {
-                setUser(data)
+            
+            if (result.success) {
+                setUser(result.data)
             }
         }
 

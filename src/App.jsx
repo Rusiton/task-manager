@@ -1,11 +1,17 @@
 import './App.css'
+
 import { AppContext } from './Pages/Context/AppContext'
 import { useContext, useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+
+import ProtectedRoutes from './Utils/ProtectedRoutes'
+
 import Layout from './Pages/Layout'
 import Home from './Pages/Home'
 import Register from './Pages/Auth/Register'
 import Login from './Pages/Auth/Login'
+import Profile from './Pages/User/Profile'
+import Settings from './Pages/User/Settings'
 
 function App() {
   const { user } = useContext(AppContext)
@@ -15,8 +21,12 @@ function App() {
    * Update user local configuration
    */
   useEffect(() => {
-    if (user) setTheme(user.settings.theme)
-    else setTheme('light')
+    if (user) {
+      setTheme(user.settings.theme)
+    }
+    else {
+      setTheme('light')
+    }
   }, [user])
 
   /**
@@ -31,11 +41,22 @@ function App() {
     <BrowserRouter>
       <Routes>
 
-        <Route path='/' element={<Layout />}>
+        <Route path='/' element={<Layout />}
+        >
           <Route index element={<Home />} />
+
+          {/* User-only routes */}
+          <Route element={<ProtectedRoutes />}>
+            <Route path='/user/:username' element={ <Profile /> } />  
+            <Route path='/user/settings' element={ <Settings /> } />  
+          </Route>
+
+          {/* Guest-only routes */}
+          <Route element={<ProtectedRoutes to='guest' />}>
+            <Route path='/register' element={ <Register /> } />
+            <Route path='/login' element={ <Login /> } />  
+          </Route>
           
-          <Route path='/register' element={user ? <Home /> : <Register />} />
-          <Route path='/login' element={user ? <Home /> : <Login />} />
         </Route>
 
       </Routes>

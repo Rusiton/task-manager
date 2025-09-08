@@ -4,6 +4,7 @@ import { AppContext } from "../Context/AppContext";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import api from "../../Utils/ApiClient";
 
 export default function Register() {
     const { setAccessToken } = useContext(AppContext)
@@ -22,19 +23,14 @@ export default function Register() {
     async function handleRegister(e) {
         e.preventDefault()
         
-        const response = await fetch('/api/auth/register', {
-            method: 'post',
-            body: JSON.stringify(formData)
-        })
+        const result = await api.post('/auth/register', formData)
 
-        const data = await response.json()
-
-        if (data.errors) {
-            setErrors(data.errors)
+        if (!result.success) {
+            setErrors(result.error.errors)
             return
         }
 
-        const accessToken = data.accessToken
+        const accessToken = result.data.accessToken
 
         localStorage.setItem('accessToken', accessToken)
         setAccessToken(accessToken)

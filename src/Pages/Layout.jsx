@@ -36,14 +36,17 @@ export default function Layout() {
 
                 {user && (
                     <div className={`${userOptionsVisibility ? 'deployed' : ''} dropdown-list absolute top-full right-0`}>
-                        <Link to={'/'} className="dropdown-list-link">
+
+                        <Link to={`/user/${user ? user.name : 'profile'}`} className="dropdown-list-link" onClick={() => setUserOptionsVisibility(false)}>
                             <FontAwesomeIcon icon={faUser} size="lg" className="text-[var(--octonary)]" />
                             Profile
                         </Link>
-                        <Link to={'/'} className="dropdown-list-link">
+
+                        <Link to={'/user/settings'} className="dropdown-list-link" onClick={() => setUserOptionsVisibility(false)}>
                             <FontAwesomeIcon icon={faGears} size="lg" className="text-[var(--octonary)]" />
                             Settings
                         </Link>
+
                     </div>
                 )}
 

@@ -4,6 +4,7 @@ import { AppContext } from "../Context/AppContext";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import api from "../../Utils/ApiClient";
 
 export default function Login() {
     const { setAccessToken } = useContext(AppContext)
@@ -20,19 +21,14 @@ export default function Login() {
     async function handleLogin(e) {
         e.preventDefault()
         
-        const response = await fetch('/api/auth/login', {
-            method: 'post',
-            body: JSON.stringify(formData)
-        })
+        const result = await api.post('/auth/login', formData)
 
-        const data = await response.json()
-
-        if (data.errors) {
-            setErrors(data.errors)
+        if (!result.success) {
+            setErrors(result.error.errors)
             return
         }
 
-        const accessToken = data.accessToken
+        const accessToken = result.data.accessToken
 
         localStorage.setItem('accessToken', accessToken)
         setAccessToken(accessToken)

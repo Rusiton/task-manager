@@ -67,7 +67,7 @@
     }
 
     main {
-        @apply flex-1 max-w-screen bg-[var(--secondary)];
+        @apply flex-1 max-w-screen bg-[var(--secondary)] overflow-hidden;
     }
 
     .nav-link {
@@ -93,7 +93,7 @@
     }
 
     .dropdown-list-link {
-        @apply inline-flex gap-3 w-full px-4 py-2 text-xs text-[var(--octonary)] transition-colors hover:bg-[var(--secondary)];
+        @apply inline-flex gap-3 w-full px-4 py-3 text-xs text-[var(--octonary)] select-none transition-colors hover:bg-[var(--secondary)];
     }
 
     .title {
