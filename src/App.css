@@ -127,4 +127,41 @@
     .primary-btn {
         @apply float-right rounded-lg px-4 py-2 bg-[var(--blue)] text-white font-semibold cursor-pointer transition-colors hover:bg-[var(--purple)];
     }
+
+    .section-card {
+        @apply p-4 bg-[var(--primary)] shadow-md;
+    }
+
+    .option-list {
+        @apply list-none space-y-2;
+    }
+
+    .option-item {
+        @apply text-[var(--octonary)] text-sm font-light;
+
+        button {
+            @apply relative w-full py-2 transition duration-300 cursor-pointer flex items-center justify-center;
+        }
+
+        button::before {
+            content: '';
+            @apply absolute -left-3 w-2 h-2 rounded-full bg-[var(--octonary)] origin-center;
+            transition: transform 300ms ease-in-out;
+            transform: scale(0);
+        }
+
+        button:hover,
+        button.selected {
+            @apply bg-[var(--secondary)] shadow-md before:scale-100;
+        }
+
+        button:hover::before,
+        button.selected::before {
+            transform: scale(1);
+        }
+    }
+
+    .board-card {
+        @apply w-48 border border-[var(--quaternary)] rounded-md shadow-md select-none;
+    }
 }

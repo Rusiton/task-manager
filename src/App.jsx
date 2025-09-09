@@ -14,7 +14,7 @@ import Profile from './Pages/User/Profile'
 import Settings from './Pages/User/Settings'
 
 function App() {
-  const { user } = useContext(AppContext)
+  const { isLoadingUser, user } = useContext(AppContext)
   const [theme, setTheme] = useState(user ? user.settings.theme : 'light')
 
   /**
@@ -37,7 +37,7 @@ function App() {
     document.getElementById('root').classList.toggle('theme-light', theme == 'light')
   }, [theme])
 
-  return (
+  return !isLoadingUser && (
     <BrowserRouter>
       <Routes>
 

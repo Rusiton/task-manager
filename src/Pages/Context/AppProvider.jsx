@@ -3,11 +3,14 @@ import { AppContext } from './AppContext'
 import { useEffect, useState } from 'react'
 
 export default function AppProvider({ children }) {
+    const [isLoadingUser, setIsLoadingUser] = useState(true)
     const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'))
     const [user, setUser] = useState(null)
 
     useEffect(() => {
         async function getUser() {
+            setIsLoadingUser(true)
+
             const result = await api.get('/auth/users', {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
@@ -17,6 +20,8 @@ export default function AppProvider({ children }) {
             if (result.success) {
                 setUser(result.data)
             }
+
+            setIsLoadingUser(false)
         }
 
         if (accessToken) {
@@ -48,7 +53,7 @@ export default function AppProvider({ children }) {
 
     
     return (
-        <AppContext.Provider value={{ accessToken, setAccessToken, user, logoutUser }}>
+        <AppContext.Provider value={{ isLoadingUser, accessToken, setAccessToken, user, logoutUser }}>
             { children }
         </AppContext.Provider>
     )
