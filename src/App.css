@@ -39,7 +39,7 @@
         --primary: #3f3f3f;
         --secondary: #585152;
         --tertiary: #938284;
-        --quartenary: #A2999E;
+        --quatenary: #A2999E;
         --quinary: #B4B0B1;
         --sestinary: #C6C7C4;
         --septenary: #d8d8d8;
@@ -162,6 +162,34 @@
     }
 
     .board-card {
-        @apply w-48 border border-[var(--quaternary)] rounded-md shadow-md select-none;
+        @apply w-full h-14 p-2 border-b border-[var(--octonary)] flex select-none;
+    }
+
+    .board-card:last-child {
+        @apply border-none;
+    }
+
+    .board-card ul li {
+        @apply px-2 border-l border-[var(--octonary)];
+
+        span {
+            @apply ml-1 text-sm text-[var(--septenary)];
+        }
+    }
+
+    .board-card ul li:first-child {
+        @apply border-none;
+    }
+
+    .board-card:nth-child(even) {
+        @apply bg-[var(--tertiary)];
+    }
+
+    .board-card:nth-child(odd) {
+        @apply bg-[var(--secondary)];
+    }
+
+    .board-loading {
+        @apply w-full h-12 flex flex-wrap items-center;
     }
 }

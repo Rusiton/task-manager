@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from "react"
 import Boards from "./Boards"
 import { AppContext } from "../../Context/AppContext"
 import ProfileSectionError from "./ProfileSectionError"
+import LoadingSectionComponent from "./LoadingSectionComponent"
 
 export default function ProfileSection({ queriedUser, section }) {
     const { accessToken } = useContext(AppContext)
@@ -14,6 +15,8 @@ export default function ProfileSection({ queriedUser, section }) {
     const [elementSection, setElementSection] = useState(null)
 
     useEffect(() => {
+        setUserBoards(null), setElementSection(null)
+
         async function getUserBoards() {
             setIsFetchingData(true)
 
@@ -25,6 +28,8 @@ export default function ProfileSection({ queriedUser, section }) {
 
             if (result.success) {
                 setUserBoards(result.data)
+            } else {
+                setElementSection(<ProfileSectionError />)
             }
 
             setIsFetchingData(false)
@@ -37,17 +42,25 @@ export default function ProfileSection({ queriedUser, section }) {
     }, [section, queriedUser, accessToken])
 
     useEffect(() => {
+        if (isFetchingData) {
+            
+            setElementSection(<LoadingSectionComponent type={
+                section.includes('Boards') && 'board'
+            } />)
+
+        }
+
         if (userBoards) {
             setElementSection(section === 'Owned Boards'
                 ? <Boards boardList={userBoards.ownedBoards} />
                 : <Boards boardList={userBoards.joinedBoards} />
             )
         }
-    }, [userBoards, section])
+    }, [isFetchingData, userBoards, section])
 
     return (
-        <div className="flex-1 p-4 flex flex-col">
-            { !isFetchingData && elementSection }
+        <div className="w-full grow p-4 flex flex-col space-y-2 overflow-y-auto">
+            { elementSection }
         </div>
     )
 }
