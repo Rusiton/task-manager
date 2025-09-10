@@ -3,8 +3,6 @@ import { generateRandomString } from "../../../Utils/String";
 import { faUsers, faUserShield } from "@fortawesome/free-solid-svg-icons";
 
 export default function Boards({ boardList }) {
-    console.log(boardList)
-
     return boardList.map(board => 
         <div key={generateRandomString()} className="board-card">
             <div className="flex-1">

@@ -1,12 +1,18 @@
 import { useContext, useState } from "react"
 import { AppContext } from "./Context/AppContext"
-import { Outlet, Link } from "react-router-dom"
+import { Outlet, Link, useLocation } from "react-router-dom"
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faGears, faHouse, faUser } from "@fortawesome/free-solid-svg-icons"
+import { generateRandomString } from "../Utils/String"
 
 export default function Layout() {
     const { user } = useContext(AppContext)
+
+    const locationArray = useLocation().pathname.split('/').filter(location => location !== '')
+    const availableLocations = [
+        'user'
+    ]
     
     const [userOptionsVisibility, setUserOptionsVisibility] = useState(false)
 
@@ -49,6 +55,23 @@ export default function Layout() {
 
                     </div>
                 )}
+
+                <div className="page-index">
+                    <ul>
+                        <li>
+                            <Link to={'/'}>Home</Link>
+                        </li>
+
+                        {locationArray.map(location => 
+                            <li key={generateRandomString()}>
+                                { availableLocations.includes(location)
+                                    ? <Link to={`/${location}`}>{location}</Link>
+                                    : location
+                                }
+                            </li>
+                        )}
+                    </ul>
+                </div>
 
             </header>
 

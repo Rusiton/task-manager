@@ -2,7 +2,7 @@ import './App.css'
 
 import { AppContext } from './Pages/Context/AppContext'
 import { useContext, useEffect, useState } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 import ProtectedRoutes from './Utils/ProtectedRoutes'
 
@@ -47,6 +47,7 @@ function App() {
 
           {/* User-only routes */}
           <Route element={<ProtectedRoutes />}>
+            <Route path='/user' element={ <Navigate to={`/user/${user.name}`} /> } />  
             <Route path='/user/:username' element={ <Profile /> } />  
             <Route path='/user/settings' element={ <Settings /> } />  
           </Route>

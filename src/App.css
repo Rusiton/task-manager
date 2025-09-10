@@ -57,13 +57,44 @@
 
     header::after {
         content: '';
-        @apply absolute top-full left-0 w-full h-[10px] pointer-events-none z-50;
+        @apply absolute top-full left-0 w-full h-2 pointer-events-none z-50;
         background: linear-gradient(to bottom, rgba(0,0,0,0.1), transparent);
     }
 
     nav {
-        @apply max-w-screen px-4 py-2 flex items-center justify-between;
+        @apply relative max-w-screen px-4 py-2 flex items-center justify-between;
         @apply bg-[var(--primary)];
+    }
+
+    nav::after {
+        content: '';
+        @apply absolute top-full left-0 w-full h-1 pointer-events-none z-50;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.1), transparent);
+    }
+
+    .page-index {
+        @apply px-4 py-2 bg-[var(--primary)] select-none;
+
+        ul {
+            @apply list-none flex gap-5;
+        }
+        
+        ul li {
+            @apply relative text-xs text-[var(--octonary)] font-light;
+        }
+
+        a:hover {
+            @apply underline;
+        }
+    }
+
+    .page-index ul li::before {
+        content: '/';
+        @apply absolute -left-3;
+    }
+
+    .page-index ul li:first-child:before {
+        content: none;
     }
 
     main {
