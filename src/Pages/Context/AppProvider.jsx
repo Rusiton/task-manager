@@ -11,6 +11,11 @@ export default function AppProvider({ children }) {
         async function getUser() {
             setIsLoadingUser(true)
 
+            if (!accessToken || accessToken === '') {
+                setIsLoadingUser(false)
+                return
+            }
+
             const result = await api.get('/auth/users', {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
@@ -24,9 +29,8 @@ export default function AppProvider({ children }) {
             setIsLoadingUser(false)
         }
 
-        if (accessToken) {
-            getUser()
-        }
+        getUser()
+
     }, [accessToken])
 
 

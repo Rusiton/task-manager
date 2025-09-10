@@ -1,8 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { generateRandomString } from "../../../Utils/String";
 import { faUsers, faUserShield } from "@fortawesome/free-solid-svg-icons";
+import EmptyProfileSection from "./EmptyProfileSection";
 
 export default function Boards({ boardList }) {
+    
+    if (boardList.length === 0) return <EmptyProfileSection />
+
     return boardList.map(board => 
         <div key={generateRandomString()} className="board-card">
             <div className="flex-1">

@@ -3,7 +3,7 @@ import { AppContext } from "./Context/AppContext"
 import { Outlet, Link, useLocation } from "react-router-dom"
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faGears, faHouse, faUser } from "@fortawesome/free-solid-svg-icons"
+import { faChalkboard, faGears, faHouse, faUser } from "@fortawesome/free-solid-svg-icons"
 import { generateRandomString } from "../Utils/String"
 
 export default function Layout() {
@@ -11,7 +11,8 @@ export default function Layout() {
 
     const locationArray = useLocation().pathname.split('/').filter(location => location !== '')
     const availableLocations = [
-        'user'
+        'boards',
+        'user',
     ]
     
     const [userOptionsVisibility, setUserOptionsVisibility] = useState(false)
@@ -20,9 +21,13 @@ export default function Layout() {
         <>
             <header>
                 <nav>
-                    <div>
+                    <div className="space-x-4">
                         <Link to={'/'} className="nav-link">
                             <FontAwesomeIcon icon={faHouse} size="2x" className="text-[var(--octonary)]" />
+                        </Link>
+
+                        <Link to={'/boards'} className="nav-link">
+                            <FontAwesomeIcon icon={faChalkboard} size="2x" className="text-[var(--octonary)]" />
                         </Link>
                     </div>
 

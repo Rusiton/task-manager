@@ -12,6 +12,7 @@ import Register from './Pages/Auth/Register'
 import Login from './Pages/Auth/Login'
 import Profile from './Pages/User/Profile'
 import Settings from './Pages/User/Settings'
+import Boards from './Pages/Boards/Boards'
 
 function App() {
   const { isLoadingUser, user } = useContext(AppContext)
@@ -47,9 +48,11 @@ function App() {
 
           {/* User-only routes */}
           <Route element={<ProtectedRoutes />}>
-            <Route path='/user' element={ <Navigate to={`/user/${user.name}`} /> } />  
+            <Route path='/user' element={ <Navigate to={user ? `/user/${user.name}` : '/login'} /> } />  
             <Route path='/user/:username' element={ <Profile /> } />  
             <Route path='/user/settings' element={ <Settings /> } />  
+
+            <Route path='/boards' element={ <Boards /> } />
           </Route>
 
           {/* Guest-only routes */}
