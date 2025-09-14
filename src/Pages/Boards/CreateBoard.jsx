@@ -25,11 +25,6 @@ export default function CreateBoard() {
     }
 
 
-    const validateUser = () => {
-        if (!accessToken || accessToken === '') throw new Error('User is not logged in.')
-    }
-
-
     const validateValues = (valuesObject) => {
         Object.keys(valuesObject).map(key => {
             const { value, maxLength, ignoreValue } = valuesObject[key]
@@ -47,8 +42,6 @@ export default function CreateBoard() {
 
         setCreatingBoardInstances(1)
         setCreatingBoard(true)
-
-        validateUser()
 
         validateValues({
             name: {value: formData.name, maxLength: 80, ignoreValue: false},
@@ -89,7 +82,7 @@ export default function CreateBoard() {
                             required={true}
                         />
                     </div>
-                    <div>
+                    <div className="h-56 flex flex-col">
                         <Textarea 
                             name={'board-description'}
                             placeholder={'Board Description'}

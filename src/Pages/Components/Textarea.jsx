@@ -20,9 +20,11 @@ export default function Textarea({ name, placeholder, maxLength, parentHandler, 
             value={inputValue}
             onChange={handleChange}
         />
-        <span 
-            className={"text-[var(--octonary)] text-xs float-right" + (inputValue.length == maxLength ? ' text-[var(--red)]' : '')}>
-            { inputValue.length } / { maxLength }
-        </span>
+        <div className="w-full">
+            <span 
+                className={"mt-2 text-[var(--octonary)] text-xs float-right" + (inputValue.length == maxLength ? ' text-[var(--red)]' : '')}>
+                { inputValue.length } / { maxLength }
+            </span>
+        </div>
     </>
 }

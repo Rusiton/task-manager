@@ -22,9 +22,11 @@ export default function Input({ name, placeholder, maxLength, parentHandler, par
             value={inputValue}
             onChange={handleChange}
         />
-        <span 
-            className={"mt-2 text-[var(--octonary)] text-xs float-right" + (inputValue.length == maxLength ? ' text-[var(--red)]' : '')}>
-            { inputValue.length } / { maxLength }
-        </span>
+        <div className="w-full">
+            <span 
+                className={"mt-2 text-[var(--octonary)] text-xs float-right" + (inputValue.length == maxLength ? ' text-[var(--red)]' : '')}>
+                { inputValue.length } / { maxLength }
+            </span>
+        </div>
     </>
 }
