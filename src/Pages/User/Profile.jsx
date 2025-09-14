@@ -43,7 +43,7 @@ export default function Profile() {
     }, [user, username, accessToken])
 
     return (
-        <div className="h-full p-4 space-y-2 flex flex-col">
+        <div className="page-container">
             
             {queriedUser && <>
 

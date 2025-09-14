@@ -34,13 +34,14 @@ class ApiClient
 
         this.log(`Making request to: ${fullUrl}`)
 
+        const { headers: _, ...optionsWithoutHeaders} = options
         const fullOptions = {
             headers: {
                 Accept: 'application/json',
                 "Content-Type": 'application/json',
                 ...options.headers,
             },
-            ...options
+            ...optionsWithoutHeaders
         }
 
         let lastError

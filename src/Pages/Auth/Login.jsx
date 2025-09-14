@@ -37,14 +37,14 @@ export default function Login() {
     }
 
     return (
-        <div className="w-full h-full flex gap-4">
-            <div className="w-3/12 min-w-68 p-4 bg-[var(--blue)] shadow-[4px_0px_3px_0px_rgba(0,_0,_0,_0.1)]">
+        <div className="w-full h-full flex">
+            <div className="z-10 w-3/12 min-w-68 p-4 bg-[var(--blue)] shadow-[4px_0px_3px_0px_rgba(0,_0,_0,_0.1)]">
                 <h1 className="title text-white">Sign In</h1>
                 <p className="text-sm text-white font-semibold select-none">Fill the form with your account information.</p>
             </div>
 
-            <div className="flex-1 flex-wrap flex items-center justify-center">
-                <form onSubmit={handleLogin}>
+            <div className="grow bg-[var(--primary)] flex-wrap flex items-center justify-center">
+                <form onSubmit={handleLogin} className="w-3/4 p-4 space-y-8">
                     <h2 className="text-2xl font-light select-none">Sign Into Your Account</h2>
 
                     <div>

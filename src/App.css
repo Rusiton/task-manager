@@ -19,9 +19,16 @@
 
         display: flex;
         flex-direction: column;
+
+        * { 
+            scrollbar-width: thin;
+            scrollbar-color: var(--quaternary) var(--secondary);
+        }
     }
 
     .theme-light {
+        --opaque: rgba(0, 0, 0, 0.5);
+
         --primary: #EEF0F2;
         --secondary: #d8d8d8;
         --tertiary: #C6C7C4;
@@ -33,9 +40,12 @@
 
         --blue: #86c5ff;
         --purple: #868eff;
+        --red: #ff6f6f;
     }
 
     .theme-dark {
+        --opaque: rgba(0, 0, 0, 0.5);
+
         --primary: #3f3f3f;
         --secondary: #585152;
         --tertiary: #938284;
@@ -47,10 +57,27 @@
 
         --blue: #86c5ff;
         --purple: #868eff;
+        --red: #ff6f6f;
     }
 }
 
 @layer components {
+    .modal-container {
+        @apply z-40 absolute w-full h-full bg-[var(--opaque)];
+
+        > div {
+            @apply translate-y-0 opacity-100 w-full h-full flex items-center justify-center transition-all ease-in-out duration-400;
+        }
+    }
+
+    .modal-container.not-visible {
+        @apply -z-50;
+
+        > div {
+            @apply translate-y-[-50%] opacity-0;
+        }
+    }
+
     header {
         @apply relative z-30;
     }
@@ -127,12 +154,12 @@
         @apply inline-flex gap-3 w-full px-4 py-3 text-xs text-[var(--octonary)] select-none transition-colors hover:bg-[var(--secondary)];
     }
 
-    .title {
-        @apply w-full text-[2rem] font-semibold select-none;
+    .page-container {
+        @apply h-full space-y-2 flex flex-col;
     }
 
-    form {
-        @apply w-full max-w-3/5 p-4 space-y-8;
+    .title {
+        @apply w-full text-[2rem] font-semibold select-none;
     }
 
     label {
@@ -140,15 +167,23 @@
     }
 
     input {
-        @apply w-full h-10 px-2 bg-[var(--primary)] text-sm outline-none transition-colors duration-100 focus:bg-[var(--tertiary)];
+        @apply w-full h-10 px-2 bg-[var(--secondary)] text-[var(--octonary)] text-xs outline-none transition-colors duration-100 focus:bg-[var(--tertiary)];
+    }
+
+    textarea {
+        @apply resize-none w-full h-48 rounded-md p-2 bg-[var(--secondary)] text-[var(--octonary)] text-xs outline-none transition-colors duration-100 focus:bg-[var(--tertiary)];
     }
 
     .text-input {
-        @apply rounded-lg;
+        @apply rounded-md;
+    }
+
+    .hybrid-input {
+        @apply px-0 rounded-md bg-transparent text-sm focus:bg-[var(--secondary)] focus:px-3;
     }
 
     .password-input { 
-        @apply rounded-l-lg;
+        @apply rounded-l-md;
     }
 
     .error {
@@ -159,8 +194,16 @@
         @apply float-right rounded-lg px-4 py-2 bg-[var(--blue)] text-white font-semibold cursor-pointer transition-colors hover:bg-[var(--purple)];
     }
 
+    .disabled-btn {
+        @apply bg-[var(--quaternary)] cursor-default hover:bg-[var(--quaternary)];
+    }
+
     .section-card {
         @apply p-4 bg-[var(--primary)] shadow-md;
+    }
+
+    .section-label {
+        @apply text-[var(--septenary)] text-sm font-light;
     }
 
     .option-list {
@@ -192,14 +235,20 @@
         }
     }
 
-    .board-card {
-        @apply w-full h-14 p-2 border-b border-[var(--octonary)] flex select-none;
+    .board-row {
+        @apply w-full min-h-14 shadow-md p-2 bg-[var(--secondary)] flex select-none transition-colors hover:bg-[var(--tertiary)];
     }
 
-    .board-card:last-child {
-        @apply border-none;
+    .board-row-loading {
+        @apply w-full h-12 flex flex-wrap items-center;
     }
 
+    .board-row ul,
+    .board-card ul {
+        @apply list-none flex justify-center;
+    }
+
+    .board-row ul li,
     .board-card ul li {
         @apply px-2 border-l border-[var(--octonary)];
 
@@ -208,19 +257,20 @@
         }
     }
 
+    .board-row ul li:first-child,
     .board-card ul li:first-child {
         @apply border-none;
     }
 
-    .board-card:nth-child(even) {
-        @apply bg-[var(--tertiary)];
+    .board-card {
+        @apply w-36 shadow-md rounded-sm bg-[var(--secondary)] select-none transition-colors hover:cursor-pointer hover:bg-[var(--blue)];
     }
 
-    .board-card:nth-child(odd) {
-        @apply bg-[var(--secondary)];
+    .board-card-loading {
+        @apply w-36 h-20 shadow-md rounded-sm bg-[var(--secondary)];
     }
 
-    .board-loading {
-        @apply w-full h-12 flex flex-wrap items-center;
+    .board-list {
+        @apply shadow-md w-56 min-w-56 p-2 rounded-lg bg-[var(--primary)] space-y-4 select-none;
     }
 }

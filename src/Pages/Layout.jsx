@@ -1,24 +1,39 @@
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { AppContext } from "./Context/AppContext"
 import { Outlet, Link, useLocation } from "react-router-dom"
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faChalkboard, faGears, faHouse, faUser } from "@fortawesome/free-solid-svg-icons"
 import { generateRandomString } from "../Utils/String"
+import Modal from "./Components/Modal"
 
 export default function Layout() {
-    const { user } = useContext(AppContext)
+    const { user, lastRouteParameter, setLastRouteParameter, modal, setModal } = useContext(AppContext)
+    
+    const location = useLocation()
 
     const locationArray = useLocation().pathname.split('/').filter(location => location !== '')
+    if (lastRouteParameter) locationArray[locationArray.length - 1] = lastRouteParameter
+
     const availableLocations = [
         'boards',
         'user',
     ]
+
+    /**
+   * Set default states on the necessary elements when route changes
+   */
+    useEffect(() => {
+        setLastRouteParameter(null)
+        setModal(null)
+    }, [location, setLastRouteParameter, setModal])
     
     const [userOptionsVisibility, setUserOptionsVisibility] = useState(false)
 
     return (
         <>
+            <Modal modal={modal} />
+            
             <header>
                 <nav>
                     <div className="space-x-4">

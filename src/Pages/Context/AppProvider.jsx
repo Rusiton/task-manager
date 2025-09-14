@@ -6,6 +6,8 @@ export default function AppProvider({ children }) {
     const [isLoadingUser, setIsLoadingUser] = useState(true)
     const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'))
     const [user, setUser] = useState(null)
+    const [lastRouteParameter, setLastRouteParameter] = useState(null)
+    const [modal, setModal] = useState(null)
 
     useEffect(() => {
         async function getUser() {
@@ -34,30 +36,38 @@ export default function AppProvider({ children }) {
     }, [accessToken])
 
 
-    async function logoutUser() {
-        const response = await fetch('/api/auth/logout', {
-            method: 'post',
+    const logoutUser = async () => {
+        const result = await api.post('/auth/logout', {
             headers : {
                 Authentication: `Bearer ${accessToken}`
             }
         })
 
-        const data = await response.json()
-
-        if (response.ok) {
+        if (result.success) {
             setUser(null)
             setAccessToken(null)
             localStorage.removeItem('accessToken')
 
-            return
+            window.location.reload()
         }
 
-        console.error(data.errors)
+        console.error(result.error)
     }
 
     
     return (
-        <AppContext.Provider value={{ isLoadingUser, accessToken, setAccessToken, user, logoutUser }}>
+        <AppContext.Provider 
+            value={{ 
+                isLoadingUser, 
+                accessToken, 
+                setAccessToken, 
+                user, 
+                logoutUser, 
+                lastRouteParameter, 
+                setLastRouteParameter,
+                modal,
+                setModal
+            }}>
             { children }
         </AppContext.Provider>
     )

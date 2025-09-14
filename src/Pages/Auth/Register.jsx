@@ -39,14 +39,14 @@ export default function Register() {
     }
 
     return (
-        <div className="w-full h-full flex gap-4">
-            <div className="w-3/12 min-w-68 p-4 bg-[var(--blue)] shadow-[4px_0px_3px_0px_rgba(0,_0,_0,_0.1)]">
+        <div className="w-full h-full flex">
+            <div className="z-10 w-3/12 min-w-68 p-4 bg-[var(--blue)] shadow-[4px_0px_3px_0px_rgba(0,_0,_0,_0.1)]">
                 <h1 className="title text-white">Get started</h1>
                 <p className="text-sm text-white font-semibold select-none">Let's create a new account for you. You just need to fill one simple form.</p>
             </div>
 
-            <div className="flex-1 flex-wrap flex items-center justify-center">
-                <form onSubmit={handleRegister}>
+            <div className="flex-1 bg-[var(--primary)] flex-wrap flex items-center justify-center">
+                <form onSubmit={handleRegister} className="w-3/4 p-4 space-y-8">
                     <h2 className="text-2xl font-light select-none">Sign Up Now</h2>
 
                     <div>

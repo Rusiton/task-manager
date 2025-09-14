@@ -1,10 +1,10 @@
 import api from "../../../Utils/ApiClient"
 
 import { useContext, useEffect, useState } from "react"
-import Boards from "./Boards"
 import { AppContext } from "../../Context/AppContext"
+import UserBoards from "../../Components/UserBoards"
 import ProfileSectionError from "./ProfileSectionError"
-import LoadingSectionComponent from "./LoadingSectionComponent"
+import LoadingBoards from "../../Components/LoadingBoards"
 
 export default function ProfileSection({ queriedUser, section }) {
     const { accessToken } = useContext(AppContext)
@@ -44,16 +44,15 @@ export default function ProfileSection({ queriedUser, section }) {
     useEffect(() => {
         if (isFetchingData) {
             
-            setElementSection(<LoadingSectionComponent type={
-                section.includes('Boards') && 'board'
-            } />)
+            section.includes('Boards') &&
+                setElementSection(<LoadingBoards boardStyle="row" />)
 
         }
 
         if (userBoards) {
             setElementSection(section === 'Owned Boards'
-                ? <Boards boardList={userBoards.ownedBoards} />
-                : <Boards boardList={userBoards.joinedBoards} />
+                ? <UserBoards boardList={userBoards.ownedBoards} />
+                : <UserBoards boardList={userBoards.joinedBoards} />
             )
         }
     }, [isFetchingData, userBoards, section])

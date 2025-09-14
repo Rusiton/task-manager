@@ -13,6 +13,8 @@ import Login from './Pages/Auth/Login'
 import Profile from './Pages/User/Profile'
 import Settings from './Pages/User/Settings'
 import Boards from './Pages/Boards/Boards'
+import CreateBoard from './Pages/Boards/CreateBoard'
+import Board from './Pages/Boards/Board'
 
 function App() {
   const { isLoadingUser, user } = useContext(AppContext)
@@ -38,12 +40,13 @@ function App() {
     document.getElementById('root').classList.toggle('theme-light', theme == 'light')
   }, [theme])
 
+
   return !isLoadingUser && (
     <BrowserRouter>
       <Routes>
 
-        <Route path='/' element={<Layout />}
-        >
+        <Route path='/' element={<Layout />} >
+
           <Route index element={<Home />} />
 
           {/* User-only routes */}
@@ -53,6 +56,8 @@ function App() {
             <Route path='/user/settings' element={ <Settings /> } />  
 
             <Route path='/boards' element={ <Boards /> } />
+            <Route path='/boards/:boardToken' element={ <Board /> } />
+            <Route path='/boards/new' element={ <CreateBoard /> } />
           </Route>
 
           {/* Guest-only routes */}
