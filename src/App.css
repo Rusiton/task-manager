@@ -22,7 +22,7 @@
 
         * { 
             scrollbar-width: thin;
-            scrollbar-color: var(--quaternary) var(--secondary);
+            scrollbar-color: var(--quaternary) transparent;
         }
     }
 
@@ -37,10 +37,13 @@
         --sestinary: #938284;
         --septenary: #585152;
         --octonary: #3f3f3f;
-
+        
         --blue: #86c5ff;
         --purple: #868eff;
+        --green: #66df6c;
+        --strongred: #ff5454;
         --red: #ff6f6f;
+        --lightred: #ffa0a0;
     }
 
     .theme-dark {
@@ -57,7 +60,10 @@
 
         --blue: #86c5ff;
         --purple: #868eff;
+        --green: #5e8d60;
+        --strongred: #ff5454;
         --red: #ff6f6f;
+        --lightred: #ffa0a0;
     }
 }
 
@@ -155,7 +161,7 @@
     }
 
     .page-container {
-        @apply h-full space-y-2 flex flex-col;
+        @apply h-full min-h-0 space-y-2 flex flex-col;
     }
 
     .title {
@@ -287,6 +293,6 @@
     }
 
     .board-list {
-        @apply shadow-md w-56 min-w-56 p-2 rounded-lg bg-[var(--primary)] space-y-4 select-none;
+        @apply shadow-md w-56 min-w-56 max-h-full p-2 rounded-lg bg-[var(--primary)] flex flex-col space-y-4 select-none;
     }
 }

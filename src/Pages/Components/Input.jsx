@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function Input({ name, placeholder, maxLength, parentHandler, parentObjectKey, required }) {
-    const [inputValue, setInputValue] = useState('')
+export default function Input({ value = '', name, placeholder, maxLength, parentHandler, parentObjectKey, required, disabled = false }) {
+    const [inputValue, setInputValue] = useState(value)
+
+    useEffect(() => {
+        setInputValue(value)
+    }, [value])
 
     const handleChange = (e) => {
         if (e.target.value.length <= maxLength) {
@@ -21,12 +25,16 @@ export default function Input({ name, placeholder, maxLength, parentHandler, par
             maxLength={maxLength}
             value={inputValue}
             onChange={handleChange}
+            disabled={disabled}
         />
-        <div className="w-full">
-            <span 
-                className={"mt-2 text-[var(--octonary)] text-xs float-right" + (inputValue.length == maxLength ? ' text-[var(--red)]' : '')}>
-                { inputValue.length } / { maxLength }
-            </span>
-        </div>
+        
+        { !disabled &&
+            <div className="w-full">
+                <span 
+                    className={"mt-2 text-[var(--octonary)] text-xs float-right" + (inputValue.length == maxLength ? ' text-[var(--red)]' : '')}>
+                    { inputValue.length } / { maxLength }
+                </span>
+            </div>
+        }
     </>
 }

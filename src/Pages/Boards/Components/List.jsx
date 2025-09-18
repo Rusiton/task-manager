@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { AppContext } from "../../Context/AppContext";
 
 import { faEllipsis, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -18,6 +18,8 @@ export default function List({ list, removeList, board, setBoard }){
     const [focused, setFocused] = useState(false)
 
     const [optionsVisibility, setOptionsVisibility] = useState(false)
+
+    const boardMemberList = [ ...board.members, board.owner ]
 
     const changeListTitle = async () => {
         if (listTitle === list.name) {
@@ -46,6 +48,8 @@ export default function List({ list, removeList, board, setBoard }){
         setListTitle(list.name)
     }
 
+
+
     const handleListTitleChange = (e) => {
         if (e.key === 'Enter' || e.key === 'Escape'){
             e.target.blur()
@@ -55,12 +59,16 @@ export default function List({ list, removeList, board, setBoard }){
         }
     }
 
+
+
     const nameRef = useClickOutside(() => {
         if (list.name !== listTitle) {
             setFocused(false)
             changeListTitle()
         }
     }, focused)
+
+
 
     const handleTaskCreation = async (newTask = null) => {
         if (newTask) {
@@ -86,7 +94,7 @@ export default function List({ list, removeList, board, setBoard }){
                     ...board,
                     lists: board.lists.map(mapList => {
                         return mapList.token === list.token
-                            ? {...mapList, tasks:[...list.tasks, newTask] }
+                            ? {...mapList, tasks: [...list.tasks, result.data] }
                             : mapList
                     })
                 })
@@ -94,20 +102,11 @@ export default function List({ list, removeList, board, setBoard }){
                 return
             }
 
-            // Removes the provisional task if the request fails
-            setBoard({
-                ...board,
-                lists: board.lists.map(mapList => {
-                    return mapList.token === list.token
-                        ? {...list, tasks: list.tasks.filter(mapTask => mapTask.token)}
-                        : mapList
-                })
-            })
+            // Removes the provisional task if the request fails (Restores board to its previous value)
+            setBoard(board)
             
             return 
         }
-
-        const boardMemberList = [...board.members, board.owner ]
 
         setModal(
             <CreateTaskForm 
@@ -149,7 +148,15 @@ export default function List({ list, removeList, board, setBoard }){
                 </div>
             </div>
             
-            <Tasks taskList={list.tasks} />
+            <div className="p-1 space-y-3 overflow-x-hidden overflow-y-auto">
+                { list.tasks &&
+                    <Tasks 
+                        taskList={list.tasks} 
+                        board={board} 
+                        setBoard={setBoard} 
+                    />
+                }
+            </div>
 
             <button 
                 className="w-full p-2 rounded-md flex items-center gap-2 transition-colors cursor-pointer hover:bg-[var(--secondary)]"

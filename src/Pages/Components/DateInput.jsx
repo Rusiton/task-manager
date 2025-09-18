@@ -1,7 +1,11 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
-export default function DateInput({ name, placeholder, parentHandler, parentObjectKey, required}) {
-    const [dateValue, setDateValue] = useState('')
+export default function DateInput({ value = '', name, placeholder, parentHandler, parentObjectKey, required, disabled = false}) {
+    const [dateValue, setDateValue] = useState(value)
+
+    useEffect(() => {
+        setDateValue(value)
+    }, [value])
 
     const handleChange = (e) => {
         setDateValue(e.target.value)
@@ -18,6 +22,7 @@ export default function DateInput({ name, placeholder, parentHandler, parentObje
             id={name}
             value={dateValue}
             onChange={handleChange}
+            disabled={disabled}
         />
     </>
 }

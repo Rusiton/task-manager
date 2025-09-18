@@ -93,7 +93,7 @@ export default function BoardLists({ board, setBoard }) {
     
 
     return (
-        <div className="w-full h-full p-2 rounded bg-[var(--secondary)] flex items-start gap-3 overflow-x-auto">
+        <div className="w-full h-full p-2 rounded bg-[var(--secondary)] flex items-start gap-3 overflow-y-hidden overflow-x-auto">
 
             {board.lists.map(list => 
                 <List 

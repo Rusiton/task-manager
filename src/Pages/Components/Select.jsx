@@ -1,8 +1,12 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { generateRandomString } from "../../Utils/String"
 
-export default function Select({ name, placeholder, optionList, parentHandler, parentObjectKey, required}) {
-    const [selectValue, setSelectValue] = useState('')
+export default function Select({ value = '', name, placeholder, optionList, parentHandler, parentObjectKey, required}) {
+    const [selectValue, setSelectValue] = useState(value)
+
+    useEffect(() => {
+        setSelectValue(value)
+    }, [value])
 
     const handleChange = (e) => {
         setSelectValue(e.target.value)

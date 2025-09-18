@@ -57,7 +57,7 @@ export default function Board() {
                 }
             </div>
 
-            <div className="section-card grow">
+            <div className="section-card grow min-h-0">
                 { board && <>
                     <BoardLists board={board} setBoard={setBoard} />
                 </>}
