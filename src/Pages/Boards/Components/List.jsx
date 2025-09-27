@@ -1,15 +1,17 @@
 import { useContext, useState } from "react";
 import { AppContext } from "../../Context/AppContext";
 
-import { faEllipsis, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import Tasks from "./Tasks";
 
 import api from "../../../Utils/ApiClient";
 import useClickOutside from '../../../Hooks/useClickOutside';
-import CreateTaskForm from "./CreateTaskForm";
 import { generateRandomString } from "../../../Utils/String";
+
+import Tasks from "./Tasks";
+import CreateTaskForm from "./CreateTaskForm";
+import ListOptions from "./ListOptions";
 
 export default function List({ list, removeList, board, setBoard }){
     const { accessToken, setModal } = useContext(AppContext)
@@ -136,16 +138,9 @@ export default function List({ list, removeList, board, setBoard }){
                     <FontAwesomeIcon icon={faEllipsis} size="md" className="text-[var(--octonary)]" />
                 </button>
                 
-                <div className={ (!optionsVisibility ? 'hidden ' : '') + "absolute right-0 top-full w-full shadow-sm rounded-xs bg-[var(--secondary)] overflow-hidden"}>
+                
+                <ListOptions visiblity={optionsVisibility} setVisibility={setOptionsVisibility} list={list} removeList={removeList} />
 
-                    <button 
-                        className="w-full p-2 flex items-center cursor-pointer transition-colors hover:bg-[var(--tertiary)]"
-                        onClick={() => removeList(list.token)}>
-                        <FontAwesomeIcon icon={faTrash} className="text-[var(--red)]" />
-                        <span className="grow text-sm text-[var(--octonary)] font-light">Delete list</span>
-                    </button>
-
-                </div>
             </div>
             
             <div className="p-1 space-y-3 overflow-x-hidden overflow-y-auto">

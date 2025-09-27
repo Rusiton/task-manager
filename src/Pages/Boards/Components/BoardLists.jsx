@@ -13,6 +13,20 @@ import { generate } from "random-words";
 export default function BoardLists({ board, setBoard }) {
     const { accessToken } = useContext(AppContext)
 
+
+
+    const refreshColumnsPositions = (listToken) => {
+        const newBoard = {
+            ...board,
+            // Filters out the current list, then refreshes all positions except for the current list.
+            lists: board.lists.filter(mapList => mapList.token !== listToken).map(mapList => {
+                return { ...mapList, position: (board.lists.indexOf(mapList) + 1) }
+            })
+        }
+
+        setBoard(newBoard)
+    }
+
     /**
      * List creation handler.
      */
@@ -73,6 +87,8 @@ export default function BoardLists({ board, setBoard }) {
             ...board,
             lists: board.lists.filter(list => list.token !== token)
         })
+
+        refreshColumnsPositions(token)
 
         const result = await api.delete(`/columns/${token}`, {
             headers: {

@@ -67,7 +67,39 @@
     }
 }
 
+@keyframes smooth-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes smooth-fade{
+    0% {
+        opacity: 100%;
+    }
+
+    100% {
+        opacity: 0%;
+    }
+}
+
 @layer components {
+    .page-loader {
+        @apply absolute z-50 w-full h-full bg-[var(--primary)] flex items-center justify-center;
+
+        .spinner {
+            @apply shadow-md rounded-lg p-2 bg-[var(--secondary)];
+            animation: smooth-spin 1200ms ease-in-out infinite;
+        }
+    }
+
+    .page-loader.fade {
+        animation: smooth-fade 500ms ease-in;
+    }
+
     .modal-container {
         @apply z-40 absolute w-full h-full bg-[var(--opaque)];
 
