@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 
-import BoardLists from "./Components/BoardLists";
+import Lists from "./Components/Lists";
 
 import api from "../../Utils/ApiClient";
 
@@ -59,7 +59,7 @@ export default function Board() {
 
             <div className="section-card grow min-h-0">
                 { board && <>
-                    <BoardLists board={board} setBoard={setBoard} />
+                    <Lists board={board} setBoard={setBoard} />
                 </>}
             </div>
         </div>

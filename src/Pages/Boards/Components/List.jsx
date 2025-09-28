@@ -12,6 +12,7 @@ import { generateRandomString } from "../../../Utils/String";
 import Tasks from "./Tasks";
 import CreateTaskForm from "./CreateTaskForm";
 import ListOptions from "./ListOptions";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
 export default function List({ list, removeList, board, setBoard }){
     const { accessToken, setModal } = useContext(AppContext)
@@ -142,16 +143,18 @@ export default function List({ list, removeList, board, setBoard }){
                 <ListOptions visiblity={optionsVisibility} setVisibility={setOptionsVisibility} list={list} removeList={removeList} />
 
             </div>
-            
-            <div className="p-1 space-y-3 overflow-x-hidden overflow-y-auto">
-                { list.tasks &&
-                    <Tasks 
-                        taskList={list.tasks} 
-                        board={board} 
-                        setBoard={setBoard} 
-                    />
-                }
-            </div>
+
+            <SortableContext items={list.tasks} strategy={verticalListSortingStrategy}>
+                <div className="p-1 flex flex-col gap-3 overflow-x-hidden overflow-y-auto">
+                    { list.tasks &&
+                        <Tasks 
+                            taskList={list.tasks} 
+                            board={board} 
+                            setBoard={setBoard} 
+                        />
+                    }
+                </div>
+            </SortableContext>
 
             <button 
                 className="w-full p-2 rounded-md flex items-center gap-2 transition-colors cursor-pointer hover:bg-[var(--secondary)]"
