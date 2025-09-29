@@ -121,7 +121,7 @@ export default function List({ list, removeList, board, setBoard }){
     }
 
     return (
-        <div className="board-list">
+        <>
             <div className="relative w-full px-3 pr-2 py-2 flex items-center justify-between gap-1">
                 <input 
                     ref={nameRef}
@@ -162,6 +162,6 @@ export default function List({ list, removeList, board, setBoard }){
                 <FontAwesomeIcon icon={faPlus} size="md" className="text-[var(--octonary)]" />
                 <span className="text-sm text-[var(--octonary)] font-light">Add a new task</span>
             </button>
-        </div>
+        </>
     )
 }

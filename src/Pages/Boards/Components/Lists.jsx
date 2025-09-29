@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../Context/AppContext";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,12 +12,14 @@ import { closestCorners, DndContext, DragOverlay, KeyboardSensor, PointerSensor,
 import { generateRandomString } from "../../../Utils/String";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import Task from "./Task";
+import Droppable from "../../Components/Droppable";
 
 export default function Lists({ board, setBoard }) {
     const { accessToken } = useContext(AppContext)
     
     const [draggingId, setDraggingId] = useState(null)
     const [draggingType, setDraggingType] = useState(null)
+    const [listToUpdateTasksPositions, setListToUpdateTasksPositions] = useState(null)
 
 
     const refreshColumnsPositions = (listToken) => {
@@ -141,12 +143,100 @@ export default function Lists({ board, setBoard }) {
         const draggedTask = getTask(active.id)
         const droppedOnTask = getTask(over.id)
 
-        // Changes dragged task position
+        if (!droppedOnTask) {
+            const list = board.lists.find(mapList => mapList.token === over.id)
+
+            // If no droppable element was found at all, no position is changed.
+            if (!list) return 
+
+            setBoard({
+                ...board,
+                lists: board.lists
+                    .map(mapList => mapList.token !== draggedTask.columnToken
+                        ? mapList
+                        : {...mapList, tasks: mapList.tasks.filter(mapTask => mapTask.token !== draggedTask.token)}
+                        // Removes the task from its previous parent.
+                    )
+                    .map(mapList => mapList.token !== list.token
+                    ? mapList
+                    : {...mapList, tasks: [...mapList.tasks, {...draggedTask, columnToken: list.token, position: 1}]}
+                    // Adds the task to its new parent.
+                )
+            })
+
+            const result = await api.patch(`/tasks/${draggedTask.token}`, {
+                'columnToken': list.token,
+                'position': -(10**4), // Big number to avoid duplicated positions for the same list.
+            }, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+
+            if (!result.success) {
+                setBoard(board)
+            }
+
+            setListToUpdateTasksPositions([draggedTask.columnToken, list.token])
+            return
+        }
+
+        // If the dragged task was droppend on a different list.
+        if (draggedTask.columnToken !== droppedOnTask.columnToken) {
+            setBoard({
+                ...board,
+                lists: board.lists
+                .map(mapList => { return mapList.token !== draggedTask.columnToken
+                    ? mapList
+                    : {...mapList, tasks: mapList.tasks.filter(mapTask => mapTask.token !== draggedTask.token)
+                        .map(mapTask => { return {
+                            ...mapTask, 
+                            position: mapList.tasks.filter(mapTask => mapTask.token !== draggedTask.token).indexOf(mapTask) + 1
+                            // Floors all tasks positions so there is no gaps in the positions indexes.
+                        } })
+                    } 
+                    // Removes the task from the starting list.
+                })
+                .map(mapList => { return mapList.token !== droppedOnTask.columnToken
+                    ? mapList
+                    : {
+                        ...mapList,
+                        tasks: [
+                            ...mapList.tasks.map(mapTask => { return mapTask.position < droppedOnTask.position
+                                ? mapTask
+                                : {...mapTask, position: mapTask.position + 1}
+                            // Increases all following tasks positions in order to insert the new task.
+                            }),
+                            { ...draggedTask, columnToken: droppedOnTask.columnToken, position: droppedOnTask.position }
+                            // Adds the task to the list it was dropped on.
+                        ].sort((a, b) => a.position - b.position)
+                    }
+                })
+            })
+
+            const result = await api.patch(`/tasks/${draggedTask.token}`, {
+                'columnToken': droppedOnTask.columnToken,
+                'position': -(10**4), // Big number to avoid duplicated positions for the same list.
+            }, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+
+            if (!result.success) {
+                setBoard(board)
+            }
+
+            setListToUpdateTasksPositions([draggedTask.columnToken, droppedOnTask.columnToken])
+            return
+        }
+
+        // Changes dragged task position within the same list.
         setBoard({
             ...board,
             lists: board.lists.map(mapList => { return mapList.token !== draggedTask.columnToken
                 ? mapList
-                : { ...mapList, tasks: arrayMove(mapList.tasks, draggedTask.position - 1, droppedOnTask.position - 1)
+                : {...mapList, tasks: arrayMove(mapList.tasks, draggedTask.position - 1, droppedOnTask.position - 1)
                     .map(mapTask => {
                     return { 
                         ...mapTask, 
@@ -155,6 +245,8 @@ export default function Lists({ board, setBoard }) {
                 )}
             })
         })
+
+        setListToUpdateTasksPositions([droppedOnTask.columnToken])
     }
 
 
@@ -165,6 +257,40 @@ export default function Lists({ board, setBoard }) {
             coordinateGetter: sortableKeyboardCoordinates
         }),
     )
+
+
+    useEffect(() => {
+        const updateTasksPositions = async (columnToken) => {
+            let result = await api.put('/tasks/orderPositions', {
+                columnToken,
+                orderedTasksTokens: board.lists.find(list => list.token === columnToken).tasks.map(mapTask => mapTask.token)
+            }, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+
+            if (!result.success) {
+                await api.get(`/boards/${board.token}`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                })
+            }
+
+            setListToUpdateTasksPositions(null)
+        }
+
+        if (listToUpdateTasksPositions) {
+            listToUpdateTasksPositions.forEach(token => {
+                const { tasks } = board.lists.find(mapList => mapList.token === token)
+
+                if (tasks.length === 0) return // Avoid position update for non-existing tasks.
+
+                updateTasksPositions(token)
+            });
+        }
+    }, [listToUpdateTasksPositions, accessToken, board])
     
 
     return (
@@ -172,13 +298,17 @@ export default function Lists({ board, setBoard }) {
 
             <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
                 {board.lists.map(list => 
-                    <List 
+                    <Droppable 
                         key={list.token ? list.token : generateRandomString()} 
-                        list={list} 
-                        removeList={handleListRemoval}
-                        board={board}
-                        setBoard={setBoard}
-                    />
+                        id={list.token ? list.token : generateRandomString()}
+                        cssClass="board-list">
+                        <List 
+                            list={list} 
+                            removeList={handleListRemoval}
+                            board={board}
+                            setBoard={setBoard}
+                        />
+                    </Droppable>
                 )}
 
                 <DragOverlay>
