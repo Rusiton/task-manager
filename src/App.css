@@ -40,8 +40,8 @@
         
         --lightgray: #eeeeee; 
         --darkgray: #1F1F1F;
-        --blue: #86c5ff;
-        --purple: #868eff;
+        --blue: #9bcfff;
+        --purple: #979eff;
         --green: #66df6c;
         --strongred: #ff5454;
         --red: #ff6f6f;
@@ -273,30 +273,18 @@
     }
 
     .option-list {
-        @apply list-none space-y-2;
+        @apply list-none space-y-2 select-none;
         
         .option-item {
-            @apply text-[var(--octonary)] text-sm font-light;
+            @apply text-[var(--octonary)] rounded-sm overflow-hidden cursor-pointer;
     
             button {
-                @apply relative w-full py-2 transition duration-300 cursor-pointer flex items-center justify-center;
-            }
-    
-            button::before {
-                content: '';
-                @apply absolute -left-3 w-1.5 h-1.5 rounded-full bg-[var(--octonary)] origin-center;
-                transition: transform 300ms ease-in-out;
-                transform: scale(0);
+                @apply relative w-full p-2 transition-colors duration-150 text-left text-xs font-semibold cursor-pointer;
             }
     
             button:hover,
             button.selected {
-                @apply bg-[var(--secondary)] shadow-md before:scale-100;
-            }
-    
-            button:hover::before,
-            button.selected::before {
-                transform: scale(1);
+                @apply bg-[var(--purple)] text-[var(--lightgray)];
             }
         }
     }

@@ -1,14 +1,22 @@
 import { useState } from "react"
 
 import ProfileSection from "./ProfileSection"
-import SideNavigationList from "./SideNavigationList"
+import SideNavigationMenu from "./SideNavigationMenu"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faChalkboardUser, faPersonChalkboard } from "@fortawesome/free-solid-svg-icons"
 
 export default function AffiliatedProfileDescription({ queriedUser }) {
     const [section, setSection] = useState('Owned Boards')
 
     const navList = [
-        'Owned Boards',
-        'Participating Boards'
+        {
+            value: 'Owned Boards', 
+            icon: <FontAwesomeIcon icon={faPersonChalkboard} size="lg" />,
+        },
+        {
+            value: 'Participating Boards', 
+            icon: <FontAwesomeIcon icon={faChalkboardUser} size="lg" />,
+        },
     ]
 
     return (
@@ -32,7 +40,7 @@ export default function AffiliatedProfileDescription({ queriedUser }) {
         </div>
 
         <div className="grow h-0 flex gap-2">
-            <SideNavigationList
+            <SideNavigationMenu
                 cssClass="option-list"
                 section={section} 
                 setSection={setSection} 

@@ -1,18 +1,30 @@
 import { useEffect, useState } from "react"
 
 import AccountSettings from "./Components/AccountSettings"
-import SideNavigationList from "./Components/SideNavigationList"
+import SideNavigationMenu from "./Components/SideNavigationMenu"
 import SuccessfullMessage from "../Components/SuccessfullMessage"
 import ProfileSettings from "./Components/ProfileSettings"
 import PreferencesSettings from "./Components/PreferencesSettings"
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faCircleUser, faSliders, faUser } from "@fortawesome/free-solid-svg-icons"
 
 export default function Settings() {
     const [section, setSection] = useState('Account')
     
     const navList = [
-        'Account',
-        'Profile',
-        'Preferences',
+        {
+            value: 'Account', 
+            icon: <FontAwesomeIcon icon={faUser} size="lg" />,
+        },
+        {
+            value: 'Profile', 
+            icon: <FontAwesomeIcon icon={faCircleUser} size="lg" />,
+        },
+        {
+            value: 'Preferences', 
+            icon: <FontAwesomeIcon icon={faSliders} size="lg" />,
+        },
     ]
 
     const [popupMessage, setPopupMessage] = useState(null)
@@ -30,7 +42,7 @@ export default function Settings() {
     return (
         <div className="page-container">
             <div className="w-full h-full shadow-md bg-[var(--secondary)] flex gap-2 justify-center">
-                <SideNavigationList
+                <SideNavigationMenu
                     cssClass="option-list"
                     section={section}
                     setSection={setSection}
