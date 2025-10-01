@@ -39,7 +39,7 @@ export default function Board() {
 
     return (
         <div className="page-container">
-            <div className="relative flex">
+            <div className={"relative flex" + (!boardTitleVisibility ? ' m-0' : '')}>
                 <div className={"section-card w-full overflow-hidden transition-all duration-150" + (boardTitleVisibility ? ' h-full' : ' h-0 py-0')}>
                     { board && 
                         <div className="w-full flex items-center">
