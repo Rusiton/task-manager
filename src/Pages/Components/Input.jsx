@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function Input({ value = '', name, placeholder, maxLength, parentHandler, parentObjectKey, required, disabled = false }) {
+export default function Input({ value = '', name, placeholder, maxLength, parentHandler, parentObjectKey, required, disabled = false, error = false }) {
     const [inputValue, setInputValue] = useState(value)
 
     useEffect(() => {
@@ -30,6 +30,11 @@ export default function Input({ value = '', name, placeholder, maxLength, parent
         
         { !disabled &&
             <div className="w-full">
+                {error && 
+                    <span className="error">
+                        { error }
+                    </span>
+                }
                 <span 
                     className={"mt-2 text-[var(--octonary)] text-xs float-right" + (inputValue.length == maxLength ? ' text-[var(--red)]' : '')}>
                     { inputValue.length } / { maxLength }

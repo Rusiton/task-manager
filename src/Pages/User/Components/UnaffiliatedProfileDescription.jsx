@@ -1,5 +1,6 @@
 import { useState } from "react"
-import ProfileNav from "./ProfileNav"
+
+import SideNavigationList from "./SideNavigationList"
 import ProfileSection from "./ProfileSection"
 
 export default function UnaffiliatedProfileDescription({ queriedUser }) {
@@ -31,13 +32,12 @@ export default function UnaffiliatedProfileDescription({ queriedUser }) {
         </div>
 
         <div className="grow h-0 flex gap-2">
-            <div className="section-card w-1/4 min-w-42">
-                <ProfileNav 
-                    profileNavigation={profileNavigation} 
-                    setProfileNavigation={setProfileNavigation} 
-                    navList={navList}    
-                />
-            </div>
+            <SideNavigationList 
+                cssClass="option-list"
+                section={profileNavigation} 
+                setSection={setProfileNavigation} 
+                navList={navList}    
+            />
 
             <div className="section-card grow p-0 flex flex-col">
                 <div className="w-full shadow-md border-b border-[var(--tertiary)] px-4 py-2 bg-[var(--secondary)]">

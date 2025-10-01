@@ -1,9 +1,10 @@
 import { useState } from "react"
-import ProfileNav from "./ProfileNav"
+
 import ProfileSection from "./ProfileSection"
+import SideNavigationList from "./SideNavigationList"
 
 export default function AffiliatedProfileDescription({ queriedUser }) {
-    const [profileNavigation, setProfileNavigation] = useState('Owned Boards')
+    const [section, setSection] = useState('Owned Boards')
 
     const navList = [
         'Owned Boards',
@@ -31,20 +32,19 @@ export default function AffiliatedProfileDescription({ queriedUser }) {
         </div>
 
         <div className="grow h-0 flex gap-2">
-            <div className="section-card w-1/6 min-w-48">
-                <ProfileNav 
-                    profileNavigation={profileNavigation} 
-                    setProfileNavigation={setProfileNavigation} 
-                    navList={navList}
-                />
-            </div>
+            <SideNavigationList
+                cssClass="option-list"
+                section={section} 
+                setSection={setSection} 
+                navList={navList}
+            />
 
             <div className="section-card grow p-0 flex flex-col">
                 <div className="w-full shadow-md border-b border-[var(--tertiary)] px-4 py-2 bg-[var(--secondary)]">
-                    <h3 className="text-xs text-[var(--octonary)] font-light">{ profileNavigation }</h3>
+                    <h3 className="text-xs text-[var(--octonary)] font-light">{ section }</h3>
                 </div>
 
-                <ProfileSection queriedUser={queriedUser} section={profileNavigation} />
+                <ProfileSection queriedUser={queriedUser} section={section} />
             </div>
         </div>
 

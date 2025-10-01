@@ -143,6 +143,8 @@ export default function Lists({ board, setBoard }) {
         const draggedTask = getTask(active.id)
         const droppedOnTask = getTask(over.id)
 
+        if (draggedTask.columnToken === over.id) return
+
         if (!droppedOnTask) {
             const list = board.lists.find(mapList => mapList.token === over.id)
 

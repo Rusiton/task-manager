@@ -62,6 +62,7 @@ export default function AppProvider({ children }) {
                 accessToken, 
                 setAccessToken, 
                 user, 
+                setUser,
                 logoutUser, 
                 lastRouteParameter, 
                 setLastRouteParameter,
