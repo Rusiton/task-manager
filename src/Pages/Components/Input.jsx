@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function Input({ value = '', name, placeholder, maxLength, parentHandler, parentObjectKey, required, disabled = false, error = false }) {
+export default function Input({ value = '', type = 'text', name, placeholder, maxLength, parentHandler, parentObjectKey, required, disabled = false, error = false }) {
     const [inputValue, setInputValue] = useState(value)
 
     useEffect(() => {
@@ -17,7 +17,7 @@ export default function Input({ value = '', name, placeholder, maxLength, parent
     return <>
         <label htmlFor={name} className="text-[var(--octonary)]">{ placeholder }</label>
         <input 
-            type="text"
+            type={type}
             required={required}
             id={name}
             name={name} 

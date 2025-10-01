@@ -4,13 +4,14 @@ import { AppContext } from "../../Context/AppContext"
 import api from "../../../Utils/ApiClient"
 
 import Input from "../../Components/Input"
+import Textarea from "../../Components/Textarea"
 
-export default function AccountSettings({ setMessage }) {
+export default function ProfileSettings({ setMessage }) {
     const { user, setUser, accessToken } = useContext(AppContext)
-
+    
     const [formData, setFormData] = useState({
-        'name': user.name,
-        'email': user.email,
+        'name': user.profile.name ? user.profile.name : '',
+        'description': user.profile.description ? user.profile.description : '',
     })
 
     const [submittingData, setSubmittingData] = useState(false)
@@ -47,24 +48,23 @@ export default function AccountSettings({ setMessage }) {
         setErrors(null)
 
         validateValues({
-            name: {value: formData.name, maxLength: 80, ignoreValue: false},
-            email: {value: formData.email, maxLength: 80, ignoreValue: false},
+            name: {value: formData.name, maxLength: 40, ignoreValue: false},
+            description: {value: formData.description, maxLength: 400, ignoreValue: true},
         })
 
-        const result = await api.patch('/auth/users', formData, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
+        const result = await api.patch('/auth/users/profile', 
+            formData, 
+            {headers: { Authorization: `Bearer ${accessToken}` }
         })
 
         if (result.success) {
-            setUser({ ...user, name: result.data.name, email: result.data.email })
+            setUser({ ...user, profile: {  ...user.profile, name: result.data.profile.name, description: result.data.profile.description} })
             setMessage('Data saved successfully')
         }
         else {
             setFormData({
-                'name': user.name,
-                'email': user.email,
+                'name': user.profile.name ? user.profile.name : '',
+                'description': user.profile.description ? user.profile.description : '',
             })
 
             setErrors(result.error.errors)
@@ -78,16 +78,16 @@ export default function AccountSettings({ setMessage }) {
             onSubmit={(e) => handleSubmit(e)} 
             className="w-full grow lg:w-10/12 p-4 space-y-8 flex flex-col">
 
-            <h1 className="title text-[var(--octonary)]">Account</h1>
+            <h1 className="title text-[var(--octonary)]">Profile</h1>
 
             <div className="grow pb-8 flex flex-col justify-between gap-8">
                 <div className="space-y-8">
                     <div>
                         <Input
                             value={formData.name}
-                            name={'user-name'} 
-                            placeholder={'Username'}
-                            maxLength={80}
+                            name={'profile-name'} 
+                            placeholder={'Profile name'}
+                            maxLength={40}
                             parentHandler={handleInputChange}
                             parentObjectKey={'name'}
                             required={true}
@@ -95,17 +95,17 @@ export default function AccountSettings({ setMessage }) {
                         />
                     </div>
 
-                    <div>
-                        <Input
-                            value={formData.email}
-                            type="email"
-                            name={'user-email'} 
-                            placeholder={'Email'}
-                            maxLength={80}
+                    <div className="h-56 flex flex-col">
+                        <Textarea
+                            value={formData.description}
+                            type="text"
+                            name={'profile-description'} 
+                            placeholder={'Biography'}
+                            maxLength={400}
                             parentHandler={handleInputChange}
-                            parentObjectKey={'email'}
-                            required={true}
-                            error={errors?.email ? errors.email : false}
+                            parentObjectKey={'description'}
+                            required={false}
+                            error={errors?.description ? errors.description : false}
                         />
                     </div>
                 </div>

@@ -3,12 +3,14 @@ import { useEffect, useState } from "react"
 import AccountSettings from "./Components/AccountSettings"
 import SideNavigationList from "./Components/SideNavigationList"
 import SuccessfullMessage from "../Components/SuccessfullMessage"
+import ProfileSettings from "./Components/ProfileSettings"
 
 export default function Settings() {
     const [section, setSection] = useState('Account')
     
     const navList = [
         'Account',
+        'Profile',
     ]
 
     const [popupMessage, setPopupMessage] = useState(null)
@@ -39,6 +41,8 @@ export default function Settings() {
                     </div>
 
                     { section === 'Account' && <AccountSettings setMessage={setPopupMessage} />}
+
+                    { section === 'Profile' && <ProfileSettings setMessage={setPopupMessage} />}
                 </div>
             </div>
         </div>
