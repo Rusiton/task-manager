@@ -38,6 +38,8 @@
         --septenary: #585152;
         --octonary: #3f3f3f;
         
+        --lightgray: #eeeeee; 
+        --darkgray: #1F1F1F;
         --blue: #86c5ff;
         --purple: #868eff;
         --green: #66df6c;
@@ -58,7 +60,9 @@
         --septenary: #d8d8d8;
         --octonary: #EEF0F2;
 
-        --blue: #86c5ff;
+        --lightgray: #eeeeee; 
+        --darkgray: #1F1F1F;
+        --blue: #166cbd;
         --purple: #868eff;
         --green: #5e8d60;
         --strongred: #ff5454;

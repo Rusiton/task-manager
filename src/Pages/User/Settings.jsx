@@ -4,6 +4,7 @@ import AccountSettings from "./Components/AccountSettings"
 import SideNavigationList from "./Components/SideNavigationList"
 import SuccessfullMessage from "../Components/SuccessfullMessage"
 import ProfileSettings from "./Components/ProfileSettings"
+import PreferencesSettings from "./Components/PreferencesSettings"
 
 export default function Settings() {
     const [section, setSection] = useState('Account')
@@ -11,6 +12,7 @@ export default function Settings() {
     const navList = [
         'Account',
         'Profile',
+        'Preferences',
     ]
 
     const [popupMessage, setPopupMessage] = useState(null)
@@ -43,6 +45,8 @@ export default function Settings() {
                     { section === 'Account' && <AccountSettings setMessage={setPopupMessage} />}
 
                     { section === 'Profile' && <ProfileSettings setMessage={setPopupMessage} />}
+
+                    { section === 'Preferences' && <PreferencesSettings setMessage={setPopupMessage} />}
                 </div>
             </div>
         </div>

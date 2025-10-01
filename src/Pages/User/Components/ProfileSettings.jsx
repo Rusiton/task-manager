@@ -38,7 +38,7 @@ export default function ProfileSettings({ setMessage }) {
         let hasDataChanged = false
 
         Object.keys(formData).forEach(key => {
-            if (formData[key] !== user[key]) hasDataChanged = true
+            if (formData[key] !== user.profile[key]) hasDataChanged = true
         })
 
         if (!hasDataChanged) return
