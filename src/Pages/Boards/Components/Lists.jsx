@@ -19,7 +19,6 @@ export default function Lists({ board, setBoard }) {
     
     const [draggingId, setDraggingId] = useState(null)
     const [draggingType, setDraggingType] = useState(null)
-    const [listToUpdateTasksPositions, setListToUpdateTasksPositions] = useState(null)
 
 
     const refreshColumnsPositions = (listToken) => {
@@ -145,6 +144,7 @@ export default function Lists({ board, setBoard }) {
 
         if (draggedTask.columnToken === over.id) return
 
+        // If there is no task to drop on, it's assumed that the dragged task was dropped on an empty list.
         if (!droppedOnTask) {
             const list = board.lists.find(mapList => mapList.token === over.id)
 
@@ -156,7 +156,15 @@ export default function Lists({ board, setBoard }) {
                 lists: board.lists
                     .map(mapList => mapList.token !== draggedTask.columnToken
                         ? mapList
-                        : {...mapList, tasks: mapList.tasks.filter(mapTask => mapTask.token !== draggedTask.token)}
+                        : {...mapList, tasks: mapList.tasks
+                            .filter(mapTask => mapTask.token !== draggedTask.token)
+                            .map(mapTask => { return {
+                                ...mapTask,
+                                position: mapList.tasks
+                                    .filter(mapTask => mapTask.token !== draggedTask.token).indexOf(mapTask) + 1
+                                    // Floors all tasks positions so there is no gaps in the positions indexes.
+                            }})
+                        }
                         // Removes the task from its previous parent.
                     )
                     .map(mapList => mapList.token !== list.token
@@ -166,9 +174,9 @@ export default function Lists({ board, setBoard }) {
                 )
             })
 
-            const result = await api.patch(`/tasks/${draggedTask.token}`, {
-                'columnToken': list.token,
-                'position': -(10**4), // Big number to avoid duplicated positions for the same list.
+            const result = await api.put(`/tasks/moveToEmptyColumn`, {
+                'task': draggedTask.token,
+                'column': list.token,
             }, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
@@ -179,7 +187,6 @@ export default function Lists({ board, setBoard }) {
                 setBoard(board)
             }
 
-            setListToUpdateTasksPositions([draggedTask.columnToken, list.token])
             return
         }
 
@@ -188,18 +195,19 @@ export default function Lists({ board, setBoard }) {
             setBoard({
                 ...board,
                 lists: board.lists
-                .map(mapList => { return mapList.token !== draggedTask.columnToken
+                .map(mapList => mapList.token !== draggedTask.columnToken
                     ? mapList
                     : {...mapList, tasks: mapList.tasks.filter(mapTask => mapTask.token !== draggedTask.token)
                         .map(mapTask => { return {
                             ...mapTask, 
-                            position: mapList.tasks.filter(mapTask => mapTask.token !== draggedTask.token).indexOf(mapTask) + 1
+                            position: mapList.tasks
+                                .filter(mapTask => mapTask.token !== draggedTask.token).indexOf(mapTask) + 1
                             // Floors all tasks positions so there is no gaps in the positions indexes.
                         } })
                     } 
                     // Removes the task from the starting list.
-                })
-                .map(mapList => { return mapList.token !== droppedOnTask.columnToken
+                )
+                .map(mapList => mapList.token !== droppedOnTask.columnToken
                     ? mapList
                     : {
                         ...mapList,
@@ -213,12 +221,12 @@ export default function Lists({ board, setBoard }) {
                             // Adds the task to the list it was dropped on.
                         ].sort((a, b) => a.position - b.position)
                     }
-                })
+                )
             })
 
-            const result = await api.patch(`/tasks/${draggedTask.token}`, {
-                'columnToken': droppedOnTask.columnToken,
-                'position': -(10**4), // Big number to avoid duplicated positions for the same list.
+            const result = await api.put(`/tasks/moveToColumn`, {
+                'draggedTask': draggedTask.token,
+                'droppedOnTask': droppedOnTask.token
             }, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
@@ -228,27 +236,35 @@ export default function Lists({ board, setBoard }) {
             if (!result.success) {
                 setBoard(board)
             }
-
-            setListToUpdateTasksPositions([draggedTask.columnToken, droppedOnTask.columnToken])
-            return
-        }
-
-        // Changes dragged task position within the same list.
-        setBoard({
-            ...board,
-            lists: board.lists.map(mapList => { return mapList.token !== draggedTask.columnToken
-                ? mapList
-                : {...mapList, tasks: arrayMove(mapList.tasks, draggedTask.position - 1, droppedOnTask.position - 1)
-                    .map(mapTask => {
-                    return { 
-                        ...mapTask, 
-                        position: arrayMove(mapList.tasks, draggedTask.position - 1, droppedOnTask.position - 1).indexOf(mapTask) + 1 
-                    }}
-                )}
+        } else {
+            // Changes dragged task position within the same list.
+            setBoard({
+                ...board,
+                lists: board.lists.map(mapList => { return mapList.token !== draggedTask.columnToken
+                    ? mapList
+                    : {...mapList, tasks: arrayMove(mapList.tasks, draggedTask.position - 1, droppedOnTask.position - 1)
+                        .map(mapTask => {
+                        return { 
+                            ...mapTask, 
+                            position: arrayMove(mapList.tasks, draggedTask.position - 1, droppedOnTask.position - 1).indexOf(mapTask) + 1 
+                        }}
+                    )}
+                })
             })
-        })
 
-        setListToUpdateTasksPositions([droppedOnTask.columnToken])
+            const result = await api.put('/tasks/moveInsideColumn', {
+                'draggedTask': draggedTask.token,
+                'droppedOnTask': droppedOnTask.token,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+
+            if (!result.success) {
+                setBoard(board)
+            }
+        }
     }
 
 
@@ -260,39 +276,6 @@ export default function Lists({ board, setBoard }) {
         }),
     )
 
-
-    useEffect(() => {
-        const updateTasksPositions = async (columnToken) => {
-            let result = await api.put('/tasks/orderPositions', {
-                columnToken,
-                orderedTasksTokens: board.lists.find(list => list.token === columnToken).tasks.map(mapTask => mapTask.token)
-            }, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
-            })
-
-            if (!result.success) {
-                await api.get(`/boards/${board.token}`, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                })
-            }
-
-            setListToUpdateTasksPositions(null)
-        }
-
-        if (listToUpdateTasksPositions) {
-            listToUpdateTasksPositions.forEach(token => {
-                const { tasks } = board.lists.find(mapList => mapList.token === token)
-
-                if (tasks.length === 0) return // Avoid position update for non-existing tasks.
-
-                updateTasksPositions(token)
-            });
-        }
-    }, [listToUpdateTasksPositions, accessToken, board])
     
 
     return (
@@ -305,7 +288,9 @@ export default function Lists({ board, setBoard }) {
                         id={list.token ? list.token : generateRandomString()}
                         cssClass="board-list">
                         <List 
+                            key={generateRandomString()}
                             list={list} 
+                            title={list.name}
                             removeList={handleListRemoval}
                             board={board}
                             setBoard={setBoard}

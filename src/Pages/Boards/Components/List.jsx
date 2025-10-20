@@ -14,10 +14,10 @@ import CreateTaskForm from "./CreateTaskForm";
 import ListOptions from "./ListOptions";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
-export default function List({ list, removeList, board, setBoard }){
+export default function List({ list, title, removeList, board, setBoard }){
     const { accessToken, setModal } = useContext(AppContext)
 
-    const [listTitle, setListTitle] = useState(list.name)
+    const [listTitle, setListTitle] = useState(title)
     const [focused, setFocused] = useState(false)
 
     const [optionsVisibility, setOptionsVisibility] = useState(false)

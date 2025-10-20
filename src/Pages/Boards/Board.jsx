@@ -1,12 +1,13 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AppContext } from "../Context/AppContext";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 
 import Lists from "./Components/Lists";
 
+import useBoardWebsocket from "../../Hooks/useBoardWebsocket"
 import api from "../../Utils/ApiClient";
 
 export default function Board() {
@@ -14,7 +15,12 @@ export default function Board() {
     const { boardToken } = useParams()
 
     const [board, setBoard] = useState(null)
+    const boardTokenRef = useRef(null)
+
     const [boardTitleVisibility, setBoardTitleVisibility] = useState(true)
+
+    const navigate = useNavigate()
+
 
     useEffect(() => {
         setLastRouteParameter(' ')
@@ -30,12 +36,204 @@ export default function Board() {
 
             if (result.success) {
                 setBoard(result.data)
+                boardTokenRef.current = result.data.token
                 setLastRouteParameter(result.data.slug)
+            }
+            else {
+                navigate('/boards')
             }
         }
 
         getBoard()
-    }, [accessToken, boardToken, setLastRouteParameter])
+    }, [boardToken])
+
+
+    
+    const { connected } = useBoardWebsocket(boardTokenRef.current, {
+        onListCreated: ({column}) => {
+            setBoard(prevBoard => {
+                if (!prevBoard) return prevBoard
+
+                const newState = {
+                    ...prevBoard,
+                    lists: [...prevBoard.lists, column]
+                }
+
+                return newState
+            })
+        },
+
+        onListUpdated: ({column}) => {
+            setBoard(prevBoard => {
+                if (!prevBoard) return prevBoard
+
+                const newState = {
+                    ...prevBoard,
+                    lists: prevBoard.lists.map(mapList => mapList.token !== column.token
+                        ? mapList
+                        : {...column}
+                    )
+                }
+
+                return newState
+            })
+        },
+
+        onListDeleted: ({column}) => {
+            setBoard(prevBoard => {
+                if (!prevBoard) return prevBoard
+
+                const listToRemove = prevBoard.lists.find(list => list.token === column)
+
+                // If there is not any list to remove at all
+                if (!listToRemove) return prevBoard
+
+                const newState = {
+                    ...prevBoard,
+                    lists: 
+                        prevBoard.lists.filter(filterList => filterList.token !== column)
+                        .map(mapList => mapList.position < listToRemove.position
+                            ? mapList
+                            : {...mapList, position: mapList.position - 1}
+                        )
+                }
+
+                return newState
+            })
+        },
+
+        onTaskCreated: ({task}) => {
+            setBoard(prevBoard => {
+                if (!prevBoard) return
+
+                // Check if the task is already moved to prevent duplicates
+                if (prevBoard.lists.find(list => list.token === task.columnToken)
+                    .tasks.find(findTask => findTask.token === task.token)) 
+                    return
+
+                const newState = {
+                    ...prevBoard,
+                    lists: prevBoard.lists.map(mapList => mapList.token !== task.columnToken
+                        ? mapList
+                        : { ...mapList, tasks: [...mapList.tasks, task] }
+                    )
+                }
+
+                return newState
+            })
+        },
+
+        onTaskMovedWithinColumn: ({column, tasks}) => {
+            setBoard(prevBoard => {
+                if (!prevBoard) return prevBoard
+
+                const newState = {
+                    ...prevBoard,
+                    lists: prevBoard.lists.map(mapList => mapList.token !== column
+                        ? mapList
+                        : {...mapList, tasks: tasks}
+                    )
+                }
+
+                return newState
+            })
+        },
+
+        onTaskMovedToColumn: ({task, previousColumn, previousPosition}) => {
+            setBoard(prevBoard => {
+                if (!prevBoard) return
+
+                // Check if the task is already moved to prevent duplicates
+                if (prevBoard.lists.find(list => list.token === task.columnToken)
+                    .tasks.find(findTask => findTask.token === task.token)) 
+                    return prevBoard
+
+                // Removes the moved task from its previous column
+                const filteredPreviousTaskList = 
+                    prevBoard.lists.find(list => list.token === previousColumn)
+                    .tasks.filter(filterTask => filterTask.token !== task.token)
+
+                // Orders the previous column so there is no gaps between tasks positions
+                const previousTaskList = 
+                    filteredPreviousTaskList
+                    .map(mapTask => mapTask.position < previousPosition
+                        ? mapTask
+                        : {...mapTask, position: filteredPreviousTaskList.indexOf(mapTask) + 1}
+                    )
+                
+                const newTaskList = [
+                    ...prevBoard.lists.find(list => list.token === task.columnToken)
+                    .tasks.map(mapTask => mapTask.position < task.position
+                        ? mapTask
+                        : {...mapTask, position: mapTask.position + 1} 
+                        // Increments each task that is at the same or a higher position than the new task by 1 in order to leave an empty slot for it to be inserted in
+                    ),
+                    task // Inserts the task at the last index
+                ].sort((a, b) => a.position - b.position) // Sorts tasks by their position value
+                
+                const newState = {
+                    ...prevBoard,
+                    lists: prevBoard.lists.map(list => list.token !== previousColumn && list.token !== task.columnToken
+                        ? list : (list.token === previousColumn
+                            ? {...list, tasks: previousTaskList}
+                            : {...list, tasks: newTaskList}
+                        )
+                    )
+                }
+
+                return newState
+            })
+        },
+
+        onTaskUpdated: (data) => {
+            setBoard(prevBoard => {
+                if (!prevBoard) return
+
+                return {
+                    ...prevBoard,
+                    lists: prevBoard.lists.map(mapList => mapList.token !== data.task.columnToken
+                        ? mapList
+                        : {...mapList, tasks: mapList.tasks.map(mapTask => mapTask.token !== data.task.token
+                            ? mapTask
+                            : data.task
+                        ) }
+                    )
+                }
+            })
+        },
+
+        onTaskDeleted: ({column, task}) => {
+            setBoard(prevBoard => {
+                if (!prevBoard) return
+
+                const list = prevBoard.lists.find(list => list.token === column)
+                const taskToRemove = list.tasks.find(findTask => findTask.token === task)
+
+                // If there is not any task to remove at all.
+                if (!taskToRemove) return prevBoard
+
+                const newTaskList = 
+                    list.tasks.filter(filterTask => filterTask.token !== task)
+                    .map(mapTask => mapTask.position < taskToRemove.position
+                        ? mapTask
+                        : {...mapTask, position: mapTask.position - 1}
+                    )
+                
+                const newState = {
+                    ...prevBoard,
+                    lists: prevBoard.lists.map(mapList => mapList.token !== column
+                        ? mapList
+                        : {...mapList, tasks: newTaskList}
+                    )
+                }
+
+                return newState
+            })
+        },
+
+    })
+
+
 
     return (
         <div className="page-container">

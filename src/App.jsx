@@ -49,6 +49,7 @@ function App() {
 
           <Route index element={<Home />} />
 
+
           {/* User-only routes */}
           <Route element={<ProtectedRoutes />}>
             <Route path='/user' element={ <Navigate to={user ? `/user/${user.name}` : '/login'} /> } />  

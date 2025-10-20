@@ -131,6 +131,7 @@ export default function ExpandedTask({ task, board, setBoard }) {
             board.lists.find(list => list.token === task.columnToken).tasks.map(mapTask => mapTask.token !== task.token
                 ? mapTask
                 : {
+                    token: task.token,
                     columnToken: formData.columnToken,
                     assignedTo: formData.assignedTo,
                     name: formData.name,
