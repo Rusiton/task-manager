@@ -3,18 +3,22 @@ import { AppContext } from "../Context/AppContext";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
+import { faAngleDown, faAngleUp, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 
 import Lists from "./Components/Lists";
+import InvitationPanel from "./Components/InvitationPanel";
 
 import useBoardWebsocket from "../../Hooks/useBoardWebsocket"
 import api from "../../Utils/ApiClient";
 
 export default function Board() {
-    const { accessToken, setLastRouteParameter } = useContext(AppContext)
+    const { user, accessToken, setLastRouteParameter, setModal } = useContext(AppContext)
     const { boardToken } = useParams()
 
     const [board, setBoard] = useState(null)
+    const [isUserOwner, setIsUserOwner] = useState(false)
+    const [isUserAdmin, setIsUserAdmin] = useState(false)
+
     const boardTokenRef = useRef(null)
 
     const [boardTitleVisibility, setBoardTitleVisibility] = useState(true)
@@ -36,8 +40,15 @@ export default function Board() {
 
             if (result.success) {
                 setBoard(result.data)
-                boardTokenRef.current = result.data.token
                 setLastRouteParameter(result.data.slug)
+                
+                setIsUserOwner(user.token === result.data.owner.token)
+                setIsUserAdmin(() => {
+                    const adminsTokens = result.data.admins.map(admin => admin.token)
+                    return adminsTokens.includes(user.token)
+                })
+
+                boardTokenRef.current = result.data.token
             }
             else {
                 navigate('/boards')
@@ -46,6 +57,18 @@ export default function Board() {
 
         getBoard()
     }, [boardToken])
+
+
+
+    const openInvitationPanel = () => {
+        setModal(
+            <InvitationPanel
+                accessToken={accessToken}
+                board={board}
+                setModal={setModal}
+            />
+        )
+    }
 
 
     
@@ -147,7 +170,7 @@ export default function Board() {
                 if (prevBoard.lists.find(list => list.token === task.columnToken)
                     .tasks.find(findTask => findTask.token === task.token)) 
                     return prevBoard
-
+                
                 // Removes the moved task from its previous column
                 const filteredPreviousTaskList = 
                     prevBoard.lists.find(list => list.token === previousColumn)
@@ -238,17 +261,30 @@ export default function Board() {
     return (
         <div className="page-container">
             <div className={"relative flex" + (!boardTitleVisibility ? ' m-0' : '')}>
-                <div className={"section-card w-full overflow-hidden transition-all duration-150" + (boardTitleVisibility ? ' h-full' : ' h-0 py-0')}>
+                <div className={"section-card pr-16 w-full flex overflow-hidden transition-all duration-150" + (boardTitleVisibility ? ' h-full' : ' h-0 py-0')}>
                     { board && 
-                        <div className="w-full flex items-center">
-                            <h1 className="title text-[var(--octonary)]">{ board.name }</h1>
-                        </div>
+                        <>
+                            <div className="w-full flex items-center">
+                                <h1 className="title text-[var(--octonary)]">{ board.name }</h1>
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                                {(isUserOwner || isUserAdmin) &&
+                                    <button 
+                                        className="p-2 rounded-lg cursor-pointer outline-[var(--blue)] transition-colors hover:bg-[var(--secondary)] hover:outline hover:shadow-md"
+                                        onClick={openInvitationPanel}>
+                                        <FontAwesomeIcon icon={faUserPlus} size="lg" className="text-[var(--octonary)]" />
+                                    </button>
+                                }
+                                
+                            </div>
+                        </>
                     }
                 </div>
 
                 { board && 
                     <button 
-                        className={"absolute right-4 w-10 rounded bg-[var(--primary)] cursor-pointer transition-transform hover:bg-[var(--tertiary)]" + (!boardTitleVisibility ? ' translate-y-[0%] border-l border-b border-r rounded-t-none border-[var(--quinary)]' : ' translate-y-[110%]')}
+                        className={"absolute right-4 w-10 rounded bg-[var(--primary)] outline-[var(--blue)] cursor-pointer transition-all hover:bg-[var(--secondary)] hover:outline" + (!boardTitleVisibility ? ' translate-y-[0%] border-l border-b border-r rounded-t-none border-[var(--quinary)]' : ' translate-y-[110%]')}
                         onClick={() => setBoardTitleVisibility(!boardTitleVisibility)}>
                         <FontAwesomeIcon icon={boardTitleVisibility ? faAngleUp : faAngleDown} size="md" className="text-[var(--octonary)]" />
                     </button>
