@@ -15,6 +15,7 @@ import Settings from './Pages/User/Settings'
 import Boards from './Pages/Boards/Boards'
 import CreateBoard from './Pages/Boards/CreateBoard'
 import Board from './Pages/Boards/Board'
+import Invitations from './Pages/User/Invitations'
 
 function App() {
   const { isLoadingUser, user } = useContext(AppContext)
@@ -54,6 +55,7 @@ function App() {
           <Route element={<ProtectedRoutes />}>
             <Route path='/user' element={ <Navigate to={user ? `/user/${user.name}` : '/login'} /> } />  
             <Route path='/user/:username' element={ <Profile /> } />  
+            <Route path='/user/invitations' element={ <Invitations /> } />  
             <Route path='/user/settings' element={ <Settings /> } />  
 
             <Route path='/boards' element={ <Boards /> } />

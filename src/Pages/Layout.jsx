@@ -3,7 +3,7 @@ import { AppContext } from "./Context/AppContext"
 import { Outlet, Link, useLocation } from "react-router-dom"
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faChalkboard, faGears, faHouse, faUser } from "@fortawesome/free-solid-svg-icons"
+import { faChalkboard, faEnvelopeOpenText, faGears, faHouse, faUser } from "@fortawesome/free-solid-svg-icons"
 import { generateRandomString } from "../Utils/String"
 import Modal from "./Components/Modal"
 
@@ -66,6 +66,11 @@ export default function Layout() {
                         <Link to={`/user/${user ? user.name : 'profile'}`} className="dropdown-list-link" onClick={() => setUserOptionsVisibility(false)}>
                             <FontAwesomeIcon icon={faUser} size="lg" className="text-[var(--octonary)]" />
                             Profile
+                        </Link>
+
+                        <Link to={'/user/invitations'} className="dropdown-list-link" onClick={() => setUserOptionsVisibility(false)}>
+                            <FontAwesomeIcon icon={faEnvelopeOpenText} size="lg" className="text-[var(--octonary)]" />
+                            Invitations
                         </Link>
 
                         <Link to={'/user/settings'} className="dropdown-list-link" onClick={() => setUserOptionsVisibility(false)}>
