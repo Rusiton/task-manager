@@ -6,10 +6,13 @@ import InvtitationItem from "../Invitations/InvitationItem"
 export default function Invitations() {
     const { user, accessToken } = useContext(AppContext)
     const [invitations, setInvitations] = useState([])
+    const [fetchingData, setFetchingData] = useState(false)
 
     useEffect(() => {
         const getInvitations = async () => {
-            const result = await api.get('/boards/invitations?sent=true', {
+            setFetchingData(true)
+
+            const result = await api.get('/boards/invitations', {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
@@ -18,6 +21,8 @@ export default function Invitations() {
             if (result.success) {
                 setInvitations(result.data)
             }
+
+            setFetchingData(false)
         }
 
         if (user && accessToken) getInvitations()
@@ -30,11 +35,18 @@ export default function Invitations() {
                     <h1 className="title text-[var(--octonary)]">Your invitations</h1>
 
                     <div className="pt-4 grow border-t border-[var(--tertiary)]">
-                        <ul>
-                            {invitations.map(invitation => 
-                                <InvtitationItem key={invitation.token} invitation={invitation} />
-                            )}
-                        </ul>
+                        { invitations.length > 0 && !fetchingData
+                            ?
+                            <ul>
+                                {invitations.map(invitation => 
+                                    <InvtitationItem key={invitation.token} invitation={invitation} setInvitations={setInvitations} />
+                                )}
+                            </ul>
+                            :
+                            <div>
+                                No invitations received
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
