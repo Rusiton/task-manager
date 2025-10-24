@@ -3,12 +3,12 @@ import { AppContext } from "./Context/AppContext"
 import { Outlet, Link, useLocation } from "react-router-dom"
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faChalkboard, faEnvelopeOpenText, faGears, faHouse, faUser } from "@fortawesome/free-solid-svg-icons"
+import { faArrowRightFromBracket, faChalkboard, faEnvelopeOpenText, faGears, faHouse, faUser } from "@fortawesome/free-solid-svg-icons"
 import { generateRandomString } from "../Utils/String"
 import Modal from "./Components/Modal"
 
 export default function Layout() {
-    const { user, lastRouteParameter, setLastRouteParameter, modal, setModal } = useContext(AppContext)
+    const { user, lastRouteParameter, setLastRouteParameter, modal, setModal, logoutUser } = useContext(AppContext)
     
     const location = useLocation()
 
@@ -77,6 +77,11 @@ export default function Layout() {
                             <FontAwesomeIcon icon={faGears} size="lg" className="text-[var(--octonary)]" />
                             Settings
                         </Link>
+
+                        <button className="dropdown-list-link text-[var(--red)] cursor-pointer" onClick={logoutUser}>
+                            <FontAwesomeIcon icon={faArrowRightFromBracket} size="lg" />
+                            Log Out
+                        </button>
 
                     </div>
                 )}

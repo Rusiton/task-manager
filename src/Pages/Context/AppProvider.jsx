@@ -37,9 +37,9 @@ export default function AppProvider({ children }) {
 
 
     const logoutUser = async () => {
-        const result = await api.post('/auth/logout', {
-            headers : {
-                Authentication: `Bearer ${accessToken}`
+        const result = await api.post('/auth/logout', {}, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
             }
         })
 
@@ -48,10 +48,8 @@ export default function AppProvider({ children }) {
             setAccessToken(null)
             localStorage.removeItem('accessToken')
 
-            window.location.reload()
+            window.location.href = '/login'
         }
-
-        console.error(result.error)
     }
 
     
