@@ -14,7 +14,7 @@ import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import Task from "./Task";
 import Droppable from "../../Components/Droppable";
 
-export default function Lists({ board, setBoard }) {
+export default function Lists({ board, setBoard, isUserOwner, isUserAdmin }) {
     const { accessToken } = useContext(AppContext)
     
     const [draggingId, setDraggingId] = useState(null)
@@ -311,12 +311,14 @@ export default function Lists({ board, setBoard }) {
                 </DragOverlay>
             </DndContext>
 
-        <button 
-            className="w-56 min-w-56 p-4 border border-dashed border-[var(--octonary)] rounded-md bg-[var(--primary)] flex items-center justify-center gap-4 cursor-pointer select-none transition-colors hover:bg-[var(--tertiary)]"
-            onClick={handleListCreation}>
-            <FontAwesomeIcon icon={faCirclePlus} size="md" className="text-[var(--octonary)]" />
-            <span className="w-full text-center text-sm text-[var(--octonary)] font-light">Create a new list</span>
-        </button>
+        { (isUserOwner || isUserAdmin) && (
+            <button 
+                className="w-56 min-w-56 p-4 border border-dashed border-[var(--octonary)] rounded-md bg-[var(--primary)] flex items-center justify-center gap-4 cursor-pointer select-none transition-colors hover:bg-[var(--tertiary)]"
+                onClick={handleListCreation}>
+                <FontAwesomeIcon icon={faCirclePlus} size="md" className="text-[var(--octonary)]" />
+                <span className="w-full text-center text-sm text-[var(--octonary)] font-light">Create a new list</span>
+            </button>
+        )}
 
         </div>
     )

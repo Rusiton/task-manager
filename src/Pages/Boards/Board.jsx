@@ -3,13 +3,14 @@ import { AppContext } from "../Context/AppContext";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleDown, faAngleUp, faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import { faAngleDown, faAngleUp, faUserPlus, faUsers } from "@fortawesome/free-solid-svg-icons";
 
 import Lists from "./Components/Lists";
 import InvitationPanel from "./Components/InvitationPanel";
 
 import useBoardWebsocket from "../../Hooks/useBoardWebsocket"
 import api from "../../Utils/ApiClient";
+import MembersPanel from "./Components/MembersPanel";
 
 export default function Board() {
     const { user, accessToken, setLastRouteParameter, setModal } = useContext(AppContext)
@@ -65,6 +66,20 @@ export default function Board() {
             <InvitationPanel
                 accessToken={accessToken}
                 board={board}
+                setModal={setModal}
+            />
+        )
+    }
+
+
+
+    const openMembersPanel = () => {
+        setModal(
+            <MembersPanel
+                isUserOwner={isUserOwner}
+                isUserAdmin={isUserAdmin}
+                board={board}
+                setBoard={setBoard}
                 setModal={setModal}
             />
         )
@@ -253,7 +268,6 @@ export default function Board() {
                 return newState
             })
         },
-
     })
 
 
@@ -268,7 +282,13 @@ export default function Board() {
                                 <h1 className="title text-[var(--octonary)]">{ board.name }</h1>
                             </div>
 
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between gap-4">
+                                <button 
+                                    className="p-2 rounded-lg cursor-pointer outline-[var(--blue)] transition-colors hover:bg-[var(--secondary)] hover:outline hover:shadow-md"
+                                    onClick={openMembersPanel}>
+                                    <FontAwesomeIcon icon={faUsers} size="lg" className="text-[var(--octonary)]" />
+                                </button>
+
                                 {(isUserOwner || isUserAdmin) &&
                                     <button 
                                         className="p-2 rounded-lg cursor-pointer outline-[var(--blue)] transition-colors hover:bg-[var(--secondary)] hover:outline hover:shadow-md"
@@ -276,7 +296,6 @@ export default function Board() {
                                         <FontAwesomeIcon icon={faUserPlus} size="lg" className="text-[var(--octonary)]" />
                                     </button>
                                 }
-                                
                             </div>
                         </>
                     }
@@ -293,7 +312,7 @@ export default function Board() {
 
             <div className="section-card grow min-h-0">
                 { board && <>
-                    <Lists board={board} setBoard={setBoard} />
+                    <Lists board={board} setBoard={setBoard} isUserOwner={isUserOwner} isUserAdmin={isUserAdmin} />
                 </>}
             </div>
         </div>
