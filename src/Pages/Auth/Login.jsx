@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AppContext } from "../Context/AppContext";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -83,8 +83,12 @@ export default function Login() {
                         <p className="error">{errors.password}</p>
                     </div>
 
+                    <Link to={'/register'} className="text-xs text-[var(--octonary)] underline hover:font-semibold">
+                        Want to create an accout?
+                    </Link>
+
                     <div>
-                        <button className="primary-btn">Create Account</button>
+                        <button className="primary-btn">Sign In</button>
                     </div>
                 </form>
             </div>

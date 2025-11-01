@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AppContext } from "../Context/AppContext";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -111,6 +111,10 @@ export default function Register() {
                             onChange={(e) => setFormData({...formData, password_confirmation: e.target.value})}
                         />
                     </div>
+
+                    <Link to={'/login'} className="text-xs text-[var(--octonary)] underline hover:font-semibold">
+                        Already got an account?
+                    </Link>
 
                     <div>
                         <button className="primary-btn">Create Account</button>
