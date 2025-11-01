@@ -88,10 +88,6 @@ export default function Layout() {
 
                 <div className="page-index">
                     <ul>
-                        <li>
-                            <Link to={'/'}>Home</Link>
-                        </li>
-
                         {locationArray.map(location => 
                             <li key={generateRandomString()}>
                                 { availableLocations.includes(location)

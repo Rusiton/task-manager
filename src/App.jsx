@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import ProtectedRoutes from './Utils/ProtectedRoutes'
 
 import Layout from './Pages/Layout'
-import Home from './Pages/Home'
 import Register from './Pages/Auth/Register'
 import Login from './Pages/Auth/Login'
 import Profile from './Pages/User/Profile'
@@ -48,7 +47,7 @@ function App() {
 
         <Route path='/' element={<Layout />} >
 
-          <Route index element={<Home />} />
+          <Route index element={<Boards />} />
 
 
           {/* User-only routes */}
